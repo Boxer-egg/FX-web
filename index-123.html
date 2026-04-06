@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Particle FX — Live Particle Effects for macOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #080c0f;
+    --bg2: #0d1318;
+    --surface: #111820;
+    --border: rgba(255,255,255,0.06);
+    --text: #e8e4dc;
+    --muted: rgba(232,228,220,0.45);
+    --dim: rgba(232,228,220,0.2);
+
+    --snow: #a8d4f5;
+    --sakura: #f5a8c8;
+    --leaves: #f5b87a;
+    --firefly: #b8f5a8;
+
+    --accent: var(--sakura);
+    --font-display: 'Cormorant Garamond', serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: 18px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── Canvas ── */
+  #canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Layout ── */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 22px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.4s, background 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(8,12,15,0.85);
+    backdrop-filter: blur(20px);
+    border-color: var(--border);
+  }
+  .nav-logo {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--text); }
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* ── Hero ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 0 80px;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 1s 0.2s forwards;
+  }
+  .hero-title {
+    font-size: clamp(52px, 8vw, 96px);
+    font-weight: 300;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 1s 0.4s forwards;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--muted);
+  }
+  .hero-sub {
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--muted);
+    max-width: 480px;
+    margin-bottom: 56px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 1s 0.6s forwards;
+  }
+  .hero-cta {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    opacity: 0;
+    animation: fadeUp 1s 0.8s forwards;
+  }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--text);
+    color: var(--bg);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    padding: 14px 28px;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+  .btn-ghost {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2px;
+  }
+  .btn-ghost:hover { color: var(--text); }
+
+  /* ── Season Switcher ── */
+  .season-switcher {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    opacity: 0;
+    animation: fadeIn 1s 1.2s forwards;
+  }
+  .season-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: transparent;
+    transition: all 0.25s;
+    position: relative;
+  }
+  .season-btn:hover, .season-btn.active {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.15);
+  }
+  .season-btn.active::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid var(--accent);
+    opacity: 0.6;
+  }
+
+  /* ── Divider ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0;
+  }
+
+  /* ── Section ── */
+  section {
+    padding: 120px 0;
+  }
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 56px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    max-width: 120px;
+  }
+  .section-title {
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+  .section-title em { font-style: italic; color: var(--muted); }
+
+  /* ── Effects Grid ── */
+  .effects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 64px;
+  }
+  .effect-card {
+    background: var(--bg);
+    padding: 40px 36px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .effect-card:hover { background: var(--bg2); }
+  .effect-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .effect-card.snow::before { background: radial-gradient(ellipse at top left, rgba(168,212,245,0.07), transparent 70%); }
+  .effect-card.sakura::before { background: radial-gradient(ellipse at top left, rgba(245,168,200,0.07), transparent 70%); }
+  .effect-card.leaves::before { background: radial-gradient(ellipse at top left, rgba(245,184,122,0.07), transparent 70%); }
+  .effect-card.fireflies::before { background: radial-gradient(ellipse at top left, rgba(184,245,168,0.07), transparent 70%); }
+  .effect-card:hover::before { opacity: 1; }
+
+  .effect-glyph {
+    font-size: 32px;
+    margin-bottom: 16px;
+    display: block;
+    filter: grayscale(0.3);
+    transition: filter 0.3s, transform 0.3s;
+  }
+  .effect-card:hover .effect-glyph { filter: grayscale(0); transform: scale(1.1); }
+  .effect-name {
+    font-size: 22px;
+    font-weight: 400;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .effect-desc {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+  .effect-tag {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    color: var(--dim);
+  }
+
+  /* ── Features ── */
+  .features-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 48px 64px;
+    margin-top: 64px;
+  }
+  .feature-item {}
+  .feature-icon {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--dim);
+    margin-bottom: 14px;
+  }
+  .feature-name {
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .feature-desc {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  /* ── Menu Preview ── */
+  .menu-preview-wrap {
+    margin-top: 72px;
+    display: flex;
+    justify-content: center;
+  }
+  .menu-preview {
+    background: rgba(20,28,36,0.95);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 8px 0;
+    width: 280px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.7), 0 0 0 0.5px rgba(255,255,255,0.05);
+    backdrop-filter: blur(40px);
+    animation: floatMenu 6s ease-in-out infinite;
+  }
+  @keyframes floatMenu {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .menu-item {
+    padding: 5px 16px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: default;
+    transition: background 0.15s;
+    letter-spacing: 0.01em;
+  }
+  .menu-item:hover { background: rgba(255,255,255,0.08); border-radius: 4px; }
+  .menu-item-left { display: flex; align-items: center; gap: 10px; }
+  .menu-check { color: rgba(255,255,255,0.5); font-size: 11px; }
+  .menu-kbd {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.05em;
+  }
+  .menu-sep {
+    height: 1px;
+    background: rgba(255,255,255,0.08);
+    margin: 5px 0;
+  }
+  .slider-row {
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .slider-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    width: 56px;
+    flex-shrink: 0;
+  }
+  .slider-track {
+    flex: 1;
+    height: 3px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    position: relative;
+  }
+  .slider-fill {
+    height: 100%;
+    background: rgba(255,255,255,0.5);
+    border-radius: 2px;
+    position: relative;
+  }
+  .slider-fill::after {
+    content: '';
+    position: absolute;
+    right: -3px;
+    top: -3px;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+  }
+  .slider-val {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+    width: 28px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* ── Specs ── */
+  .specs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 64px;
+  }
+  .spec-cell {
+    background: var(--bg);
+    padding: 32px 28px;
+    text-align: center;
+  }
+  .spec-value {
+    font-family: var(--font-mono);
+    font-size: 28px;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+  .spec-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+
+  /* ── Langs ── */
+  .lang-pills {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 28px;
+  }
+  .lang-pill {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  /* ── Footer ── */
+  footer {
+    padding: 60px 0;
+    border-top: 1px solid var(--border);
+  }
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-text {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--dim);
+  }
+  .footer-built {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+  }
+  .footer-built span { color: var(--muted); }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s, transform 0.8s;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ── Grain overlay ── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.025;
+    pointer-events: none;
+    z-index: 200;
+  }
+
+  @media (max-width: 640px) {
+    .container { padding: 0 24px; }
+    nav { padding: 18px 24px; }
+    .nav-links { display: none; }
+    .effects-grid { grid-template-columns: 1fr; }
+    .features-list { grid-template-columns: 1fr; gap: 36px; }
+    .specs-grid { grid-template-columns: 1fr; }
+    .season-switcher { display: none; }
+    .footer-inner { flex-direction: column; gap: 12px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<!-- Nav -->
+<nav id="nav">
+  <a href="#" class="nav-logo"><span>Particle</span> FX</a>
+  <ul class="nav-links">
+    <li><a href="#effects">Effects</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#specs">Specs</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<div class="container">
+  <section id="hero" style="position:relative;">
+    <p class="hero-eyebrow">macOS Desktop Enhancement</p>
+    <h1 class="hero-title">
+      Your screen,<br>
+      <em>alive.</em>
+    </h1>
+    <p class="hero-sub">
+      Drape your desktop in drifting snow, falling sakura petals, autumn leaves, or wandering fireflies. A living atmosphere, always in the background.
+    </p>
+    <div class="hero-cta">
+      <a href="#" class="btn-primary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download for macOS
+      </a>
+      <a href="#effects" class="btn-ghost">See effects →</a>
+    </div>
+
+    <!-- Season switcher -->
+    <div class="season-switcher">
+      <button class="season-btn" data-season="snow" title="Snow">❄️</button>
+      <button class="season-btn active" data-season="sakura" title="Sakura">🌸</button>
+      <button class="season-btn" data-season="leaves" title="Leaves">🍂</button>
+      <button class="season-btn" data-season="fireflies" title="Fireflies">🪲</button>
+    </div>
+  </section>
+</div>
+
+<div class="divider"></div>
+
+<!-- Effects -->
+<div class="container">
+  <section id="effects">
+    <p class="section-label reveal">01 — Effects</p>
+    <h2 class="section-title reveal">Four seasons,<br><em>one menubar app.</em></h2>
+
+    <div class="effects-grid reveal">
+      <div class="effect-card snow">
+        <span class="effect-glyph">❄️</span>
+        <span class="effect-tag">WINTER</span>
+        <h3 class="effect-name">Snow</h3>
+        <p class="effect-desc">Soft white flakes drift downward with gentle sway. Serene and meditative.</p>
+      </div>
+      <div class="effect-card sakura">
+        <span class="effect-glyph">🌸</span>
+        <span class="effect-tag">SPRING</span>
+        <h3 class="effect-name">Sakura</h3>
+        <p class="effect-desc">Pink petals spiral and tumble on the breeze. Fleeting beauty in every frame.</p>
+      </div>
+      <div class="effect-card leaves">
+        <span class="effect-glyph">🍂</span>
+        <span class="effect-tag">AUTUMN</span>
+        <h3 class="effect-name">Leaves</h3>
+        <p class="effect-desc">Rust, amber, and gold leaves tumble in warm tones with rapid spin and drift.</p>
+      </div>
+      <div class="effect-card fireflies">
+        <span class="effect-glyph">🪲</span>
+        <span class="effect-tag">SUMMER</span>
+        <h3 class="effect-name">Fireflies</h3>
+        <p class="effect-desc">Luminous particles pulse and wander across your screen. Best after dark.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="divider"></div>
+
+<!-- Features -->
+<div class="container">
+  <section id="features">
+    <p class="section-label reveal">02 — Features</p>
+    <h2 class="section-title reveal">Thoughtfully<br><em>designed.</em></h2>
+
+    <div class="features-list">
+      <div class="feature-item reveal">
+        <p class="feature-icon">01</p>
+        <h3 class="feature-name">Two Layer Modes</h3>
+        <p class="feature-desc">Place particles above all windows for maximum drama, or slip them quietly below — floating on your wallpaper while you work.</p>
+      </div>
+      <div class="feature-item reveal">
+        <p class="feature-icon">02</p>
+        <h3 class="feature-name">Menubar Native</h3>
+        <p class="feature-desc">No Dock icon. No floating window. Lives silently in your menu bar — <kbd>⌘⇧T</kbd> to toggle on and off in an instant.</p>
+      </div>
+      <div class="feature-item reveal">
+        <p class="feature-icon">03</p>
+        <h3 class="feature-name">Real-time Sliders</h3>
+        <p class="feature-desc">Tune density, speed, size, opacity, and wind directly from the menu. Changes apply live, no settings window required.</p>
+      </div>
+      <div class="feature-item reveal">
+        <p class="feature-icon">04</p>
+        <h3 class="feature-name">Wind Simulation</h3>
+        <p class="feature-desc">Dial in horizontal acceleration for each effect. A gentle breeze or a full storm — the physics respond to your input.</p>
+      </div>
+      <div class="feature-item reveal">
+        <p class="feature-icon">05</p>
+        <h3 class="feature-name">SpriteKit Rendering</h3>
+        <p class="feature-desc">Built on Apple's native SpriteKit for hardware-accelerated particle rendering. Smooth at any density, minimal CPU impact.</p>
+      </div>
+      <div class="feature-item reveal">
+        <p class="feature-icon">06</p>
+        <h3 class="feature-name">5 Languages</h3>
+        <p class="feature-desc">Full localization in English, Chinese, Japanese, German, and French. The interface speaks your language.</p>
+      </div>
+    </div>
+
+    <!-- Menu Preview -->
+    <div class="menu-preview-wrap reveal">
+      <div class="menu-preview">
+        <div class="menu-item">
+          <span class="menu-item-left">Disable Effects</span>
+          <span class="menu-kbd">⌘⇧T</span>
+        </div>
+        <div class="menu-sep"></div>
+        <div class="menu-item"><span class="menu-item-left">❄️ Snow</span><span class="menu-check">✓</span></div>
+        <div class="menu-item"><span class="menu-item-left">🌸 Sakura</span><span class="menu-kbd">⌘2</span></div>
+        <div class="menu-item"><span class="menu-item-left">🍂 Leaves</span><span class="menu-kbd">⌘3</span></div>
+        <div class="menu-item"><span class="menu-item-left">🪲 Fireflies</span><span class="menu-kbd">⌘4</span></div>
+        <div class="menu-sep"></div>
+        <div class="slider-row">
+          <span class="slider-label">Density</span>
+          <div class="slider-track"><div class="slider-fill" style="width:35%"></div></div>
+          <span class="slider-val">50</span>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Speed</span>
+          <div class="slider-track"><div class="slider-fill" style="width:50%"></div></div>
+          <span class="slider-val">100</span>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Opacity</span>
+          <div class="slider-track"><div class="slider-fill" style="width:70%"></div></div>
+          <span class="slider-val">70%</span>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Wind</span>
+          <div class="slider-track"><div class="slider-fill" style="width:48%"></div></div>
+          <span class="slider-val">0.0</span>
+        </div>
+        <div class="menu-sep"></div>
+        <div class="menu-item"><span>Always on Top</span></div>
+        <div class="menu-item"><span class="menu-item-left">Below Windows</span><span class="menu-check">✓</span></div>
+        <div class="menu-sep"></div>
+        <div class="menu-item"><span>Quit Particle FX</span><span class="menu-kbd">⌘Q</span></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="divider"></div>
+
+<!-- Specs -->
+<div class="container">
+  <section id="specs">
+    <p class="section-label reveal">03 — Specs</p>
+    <h2 class="section-title reveal">Built for<br><em>macOS.</em></h2>
+
+    <div class="specs-grid reveal">
+      <div class="spec-cell">
+        <div class="spec-value">macOS 13+</div>
+        <div class="spec-label">Minimum Version</div>
+      </div>
+      <div class="spec-cell">
+        <div class="spec-value">Universal</div>
+        <div class="spec-label">Apple Silicon + Intel</div>
+      </div>
+      <div class="spec-cell">
+        <div class="spec-value">&lt; 5%</div>
+        <div class="spec-label">CPU at Standard Density</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 64px;" class="reveal">
+      <p class="feature-icon" style="margin-bottom: 14px;">Technologies</p>
+      <p style="font-size:15px; color:var(--muted); line-height:1.7; max-width: 520px;">
+        Written in Swift and SwiftUI. Particles rendered via SpriteKit on Metal. Settings persisted through UserDefaults. Fully sandboxed with click-through transparent overlay windows.
+      </p>
+    </div>
+
+    <div style="margin-top: 48px;" class="reveal">
+      <p class="feature-icon" style="margin-bottom: 14px;">Localizations</p>
+      <div class="lang-pills">
+        <span class="lang-pill">🇺🇸 English</span>
+        <span class="lang-pill">🇨🇳 中文</span>
+        <span class="lang-pill">🇯🇵 日本語</span>
+        <span class="lang-pill">🇩🇪 Deutsch</span>
+        <span class="lang-pill">🇫🇷 Français</span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="divider"></div>
+
+<!-- Footer -->
+<div class="container">
+  <footer>
+    <div class="footer-inner">
+      <p class="footer-text">© 2026 Particle FX</p>
+      <p class="footer-built">Built with <span>Swift · SpriteKit · Metal</span></p>
+    </div>
+  </footer>
+</div>
+
+<script>
+// ── Canvas Particle System ──
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [], currentSeason = 'sakura';
+
+const SEASONS = {
+  snow:      { color: () => `rgba(168,212,245,${Math.random()*0.4+0.3})`, shape: 'circle', speed: 0.6, size: () => Math.random()*3+1.5, wind: 0.15, rotate: false },
+  sakura:    { color: () => `rgba(245,168,200,${Math.random()*0.5+0.3})`, shape: 'petal',  speed: 0.8, size: () => Math.random()*5+3,   wind: 0.4,  rotate: true  },
+  leaves:    { color: () => { const h=[15,25,35][Math.floor(Math.random()*3)]; return `hsla(${h},80%,55%,${Math.random()*0.5+0.3})`; }, shape: 'petal', speed: 1.2, size: () => Math.random()*6+4, wind: 0.3, rotate: true },
+  fireflies: { color: () => `rgba(184,245,168,${Math.random()*0.6+0.2})`,  shape: 'glow',  speed: 0.3, size: () => Math.random()*3+2,   wind: 0,    rotate: false },
+};
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+
+class Particle {
+  constructor() { this.reset(true); }
+  reset(initial = false) {
+    const s = SEASONS[currentSeason];
+    this.x = Math.random() * W;
+    this.y = initial ? Math.random() * H : -20;
+    this.size = s.size();
+    this.speed = s.speed * (Math.random() * 0.5 + 0.75);
+    this.wind  = (Math.random() - 0.5) * s.wind * 2;
+    this.rot   = Math.random() * Math.PI * 2;
+    this.rotSpeed = s.rotate ? (Math.random() - 0.5) * 0.05 : 0;
+    this.alpha = Math.random() * 0.5 + 0.3;
+    this.color = s.color();
+    this.shape = s.shape;
+    if (currentSeason === 'fireflies') {
+      this.x = Math.random() * W;
+      this.y = Math.random() * H;
+      this.vx = (Math.random() - 0.5) * 0.5;
+      this.vy = (Math.random() - 0.5) * 0.5;
+      this.pulse = Math.random() * Math.PI * 2;
+      this.pulseSpeed = Math.random() * 0.02 + 0.01;
+    }
+  }
+  update() {
+    if (currentSeason === 'fireflies') {
+      this.pulse += this.pulseSpeed;
+      this.alpha = (Math.sin(this.pulse) * 0.4 + 0.4);
+      this.x += this.vx; this.y += this.vy;
+      if (this.x < 0 || this.x > W) this.vx *= -1;
+      if (this.y < 0 || this.y > H) this.vy *= -1;
+    } else {
+      this.y += this.speed;
+      this.x += this.wind;
+      this.rot += this.rotSpeed;
+      if (this.y > H + 20) this.reset();
+    }
+  }
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.rot);
+    if (this.shape === 'circle') {
+      ctx.beginPath();
+      ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.fill();
+    } else if (this.shape === 'petal') {
+      ctx.beginPath();
+      ctx.ellipse(0, 0, this.size * 1.8, this.size * 0.8, 0, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.fill();
+    } else if (this.shape === 'glow') {
+      const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size * 3);
+      grad.addColorStop(0, this.color);
+      grad.addColorStop(0.4, this.color.replace(/[\d.]+\)$/, '0.3)'));
+      grad.addColorStop(1, 'transparent');
+      ctx.beginPath();
+      ctx.arc(0, 0, this.size * 3, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+
+function initParticles() {
+  const count = currentSeason === 'fireflies' ? 40 : 80;
+  particles = Array.from({ length: count }, () => new Particle());
+}
+
+function loop() {
+  ctx.clearRect(0, 0, W, H);
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(loop);
+}
+
+// Season switcher
+document.querySelectorAll('.season-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.season-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentSeason = btn.dataset.season;
+
+    // update accent color
+    const colors = { snow: 'var(--snow)', sakura: 'var(--sakura)', leaves: 'var(--leaves)', fireflies: 'var(--firefly)' };
+    document.documentElement.style.setProperty('--accent', colors[currentSeason]);
+
+    initParticles();
+  });
+});
+
+// Nav scroll
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// Reveal on scroll
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Animated slider fills
+function animateSliders() {
+  const targets = [35, 50, 70, 48];
+  const fills = document.querySelectorAll('.slider-fill');
+  fills.forEach((fill, i) => {
+    const target = targets[i];
+    let current = parseFloat(fill.style.width);
+    const drift = (Math.random() - 0.5) * 2;
+    const next = Math.max(10, Math.min(90, current + drift));
+    fill.style.transition = 'width 1.5s ease';
+    fill.style.width = next + '%';
+  });
+}
+setInterval(animateSliders, 2000);
+
+resize();
+window.addEventListener('resize', () => { resize(); initParticles(); });
+initParticles();
+loop();
+</script>
+</body>
+</html>
