@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Particle FX — Live Particle Effects for macOS</title>
+<title data-i18n="meta.title">Particle FX — Live Particle Effects for macOS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
@@ -55,6 +55,70 @@
     padding: 0 40px;
     position: relative;
     z-index: 1;
+  }
+
+  /* ── Lang Toggle ── */
+  .lang-toggle {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    background: transparent;
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: 20px;
+  }
+  .lang-toggle:hover {
+    color: var(--text);
+    border-color: var(--dim);
+  }
+
+  /* ── Installation ── */
+  .install-guide { margin-top: 64px; }
+  .step {
+    padding: 32px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .step:first-child { padding-top: 0; }
+  .step:last-child { border-bottom: none; }
+  .step-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--dim);
+    margin-bottom: 12px;
+  }
+  .step-text {
+    font-size: 16px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+  .step-text b { color: var(--text); font-weight: 400; }
+  .code-wrap {
+    margin-top: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    position: relative;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .code-text {
+    color: var(--text);
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .code-label {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--dim);
+    flex-shrink: 0;
   }
 
   /* ── Nav ── */
@@ -550,29 +614,30 @@
 <nav id="nav">
   <a href="#" class="nav-logo"><span>Particle</span> FX</a>
   <ul class="nav-links">
-    <li><a href="#effects">Effects</a></li>
-    <li><a href="#features">Features</a></li>
-    <li><a href="#specs">Specs</a></li>
+    <li><a href="#effects" data-i18n="nav.effects">Effects</a></li>
+    <li><a href="#features" data-i18n="nav.features">Features</a></li>
+    <li><a href="#specs" data-i18n="nav.specs">Specs</a></li>
   </ul>
+  <button id="lang-toggle" class="lang-toggle">中文</button>
 </nav>
 
 <!-- Hero -->
 <div class="container">
   <section id="hero" style="position:relative;">
-    <p class="hero-eyebrow">macOS Desktop Enhancement</p>
+    <p class="hero-eyebrow" data-i18n="hero.eyebrow">macOS Desktop Enhancement</p>
     <h1 class="hero-title">
-      Your screen,<br>
-      <em>alive.</em>
+      <span data-i18n="hero.title1">Your screen,</span><br>
+      <em data-i18n="hero.title2">alive.</em>
     </h1>
-    <p class="hero-sub">
+    <p class="hero-sub" data-i18n="hero.sub">
       Drape your desktop in drifting snow, falling sakura petals, autumn leaves, or wandering fireflies. A living atmosphere, always in the background.
     </p>
     <div class="hero-cta">
-      <a href="https://github.com/Boxer-egg/PFX-release/releases/download/v0.0.1/ParticleFX.dmg" class="btn-primary">
+<a href="https://github.com/Boxer-egg/PFX-release/releases/download/v0.0.2/ParticleFX.dmg" class="btn-primary" >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Download for macOS
+        <span data-i18n="hero.download">Download for macOS</span>
       </a>
-      <a href="#effects" class="btn-ghost">See effects →</a>
+      <a href="#effects" class="btn-ghost"><span data-i18n="hero.cta">See effects →</span></a>
     </div>
 
     <!-- Season switcher -->
@@ -590,33 +655,33 @@
 <!-- Effects -->
 <div class="container">
   <section id="effects">
-    <p class="section-label reveal">01 — Effects</p>
-    <h2 class="section-title reveal">Four seasons,<br><em>one menubar app.</em></h2>
+    <p class="section-label reveal">01 — <span data-i18n="effects.label">Effects</span></p>
+    <h2 class="section-title reveal"><span data-i18n="effects.title1">Four seasons,</span><br><em data-i18n="effects.title2">one menubar app.</em></h2>
 
     <div class="effects-grid reveal">
       <div class="effect-card snow">
         <span class="effect-glyph">❄️</span>
-        <span class="effect-tag">WINTER</span>
-        <h3 class="effect-name">Snow</h3>
-        <p class="effect-desc">Soft white flakes drift downward with gentle sway. Serene and meditative.</p>
+        <span class="effect-tag" data-i18n="effects.winter">WINTER</span>
+        <h3 class="effect-name" data-i18n="effects.snow">Snow</h3>
+        <p class="effect-desc" data-i18n="effects.snowDesc">Soft white flakes drift downward with gentle sway. Serene and meditative.</p>
       </div>
       <div class="effect-card sakura">
         <span class="effect-glyph">🌸</span>
-        <span class="effect-tag">SPRING</span>
-        <h3 class="effect-name">Sakura</h3>
-        <p class="effect-desc">Pink petals spiral and tumble on the breeze. Fleeting beauty in every frame.</p>
+        <span class="effect-tag" data-i18n="effects.spring">SPRING</span>
+        <h3 class="effect-name" data-i18n="effects.sakura">Sakura</h3>
+        <p class="effect-desc" data-i18n="effects.sakuraDesc">Pink petals spiral and tumble on the breeze. Fleeting beauty in every frame.</p>
       </div>
       <div class="effect-card leaves">
         <span class="effect-glyph">🍂</span>
-        <span class="effect-tag">AUTUMN</span>
-        <h3 class="effect-name">Leaves</h3>
-        <p class="effect-desc">Rust, amber, and gold leaves tumble in warm tones with rapid spin and drift.</p>
+        <span class="effect-tag" data-i18n="effects.autumn">AUTUMN</span>
+        <h3 class="effect-name" data-i18n="effects.leaves">Leaves</h3>
+        <p class="effect-desc" data-i18n="effects.leavesDesc">Rust, amber, and gold leaves tumble in warm tones with rapid spin and drift.</p>
       </div>
       <div class="effect-card fireflies">
         <span class="effect-glyph">🪲</span>
-        <span class="effect-tag">SUMMER</span>
-        <h3 class="effect-name">Fireflies</h3>
-        <p class="effect-desc">Luminous particles pulse and wander across your screen. Best after dark.</p>
+        <span class="effect-tag" data-i18n="effects.summer">SUMMER</span>
+        <h3 class="effect-name" data-i18n="effects.fireflies">Fireflies</h3>
+        <p class="effect-desc" data-i18n="effects.firefliesDesc">Luminous particles pulse and wander across your screen. Best after dark.</p>
       </div>
     </div>
   </section>
@@ -627,39 +692,39 @@
 <!-- Features -->
 <div class="container">
   <section id="features">
-    <p class="section-label reveal">02 — Features</p>
-    <h2 class="section-title reveal">Thoughtfully<br><em>designed.</em></h2>
+    <p class="section-label reveal">02 — <span data-i18n="features.label">Features</span></p>
+    <h2 class="section-title reveal"><span data-i18n="features.title1">Thoughtfully</span><br><em data-i18n="features.title2">designed.</em></h2>
 
     <div class="features-list">
       <div class="feature-item reveal">
         <p class="feature-icon">01</p>
-        <h3 class="feature-name">Two Layer Modes</h3>
-        <p class="feature-desc">Place particles above all windows for maximum drama, or slip them quietly below — floating on your wallpaper while you work.</p>
+        <h3 class="feature-name" data-i18n="features.f1.name">Two Layer Modes</h3>
+        <p class="feature-desc" data-i18n="features.f1.desc">Place particles above all windows for maximum drama, or slip them quietly below — floating on your wallpaper while you work.</p>
       </div>
       <div class="feature-item reveal">
         <p class="feature-icon">02</p>
-        <h3 class="feature-name">Menubar Native</h3>
-        <p class="feature-desc">No Dock icon. No floating window. Lives silently in your menu bar — <kbd>⌘⇧T</kbd> to toggle on and off in an instant.</p>
+        <h3 class="feature-name" data-i18n="features.f2.name">Menubar Native</h3>
+        <p class="feature-desc" data-i18n="features.f2.desc">No Dock icon. No floating window. Lives silently in your menu bar — <kbd>⌘⇧T</kbd> to toggle on and off in an instant.</p>
       </div>
       <div class="feature-item reveal">
         <p class="feature-icon">03</p>
-        <h3 class="feature-name">Real-time Sliders</h3>
-        <p class="feature-desc">Tune density, speed, size, opacity, and wind directly from the menu. Changes apply live, no settings window required.</p>
+        <h3 class="feature-name" data-i18n="features.f3.name">Real-time Sliders</h3>
+        <p class="feature-desc" data-i18n="features.f3.desc">Tune density, speed, size, opacity, and wind directly from the menu. Changes apply live, no settings window required.</p>
       </div>
       <div class="feature-item reveal">
         <p class="feature-icon">04</p>
-        <h3 class="feature-name">Wind Simulation</h3>
-        <p class="feature-desc">Dial in horizontal acceleration for each effect. A gentle breeze or a full storm — the physics respond to your input.</p>
+        <h3 class="feature-name" data-i18n="features.f4.name">Wind Simulation</h3>
+        <p class="feature-desc" data-i18n="features.f4.desc">Dial in horizontal acceleration for each effect. A gentle breeze or a full storm — the physics respond to your input.</p>
       </div>
       <div class="feature-item reveal">
         <p class="feature-icon">05</p>
-        <h3 class="feature-name">SpriteKit Rendering</h3>
-        <p class="feature-desc">Built on Apple's native SpriteKit for hardware-accelerated particle rendering. Smooth at any density, minimal CPU impact.</p>
+        <h3 class="feature-name" data-i18n="features.f5.name">SpriteKit Rendering</h3>
+        <p class="feature-desc" data-i18n="features.f5.desc">Built on Apple's native SpriteKit for hardware-accelerated particle rendering. Smooth at any density, minimal CPU impact.</p>
       </div>
       <div class="feature-item reveal">
         <p class="feature-icon">06</p>
-        <h3 class="feature-name">5 Languages</h3>
-        <p class="feature-desc">Full localization in English, Chinese, Japanese, German, and French. The interface speaks your language.</p>
+        <h3 class="feature-name" data-i18n="features.f6.name">5 Languages</h3>
+        <p class="feature-desc" data-i18n="features.f6.desc">Full localization in English, Chinese, Japanese, German, and French. The interface speaks your language.</p>
       </div>
     </div>
 
@@ -667,40 +732,40 @@
     <div class="menu-preview-wrap reveal">
       <div class="menu-preview">
         <div class="menu-item">
-          <span class="menu-item-left">Disable Effects</span>
+          <span class="menu-item-left" data-i18n="menu.disable">Disable Effects</span>
           <span class="menu-kbd">⌘⇧T</span>
         </div>
         <div class="menu-sep"></div>
-        <div class="menu-item"><span class="menu-item-left">❄️ Snow</span><span class="menu-check">✓</span></div>
-        <div class="menu-item"><span class="menu-item-left">🌸 Sakura</span><span class="menu-kbd">⌘2</span></div>
-        <div class="menu-item"><span class="menu-item-left">🍂 Leaves</span><span class="menu-kbd">⌘3</span></div>
-        <div class="menu-item"><span class="menu-item-left">🪲 Fireflies</span><span class="menu-kbd">⌘4</span></div>
+        <div class="menu-item"><span class="menu-item-left">❄️ <span data-i18n="menu.snow">Snow</span></span><span class="menu-check">✓</span></div>
+        <div class="menu-item"><span class="menu-item-left">🌸 <span data-i18n="menu.sakura">Sakura</span></span><span class="menu-kbd">⌘2</span></div>
+        <div class="menu-item"><span class="menu-item-left">🍂 <span data-i18n="menu.leaves">Leaves</span></span><span class="menu-kbd">⌘3</span></div>
+        <div class="menu-item"><span class="menu-item-left">🪲 <span data-i18n="menu.fireflies">Fireflies</span></span><span class="menu-kbd">⌘4</span></div>
         <div class="menu-sep"></div>
         <div class="slider-row">
-          <span class="slider-label">Density</span>
+          <span class="slider-label" data-i18n="menu.density">Density</span>
           <div class="slider-track"><div class="slider-fill" style="width:35%"></div></div>
           <span class="slider-val">50</span>
         </div>
         <div class="slider-row">
-          <span class="slider-label">Speed</span>
+          <span class="slider-label" data-i18n="menu.speed">Speed</span>
           <div class="slider-track"><div class="slider-fill" style="width:50%"></div></div>
           <span class="slider-val">100</span>
         </div>
         <div class="slider-row">
-          <span class="slider-label">Opacity</span>
+          <span class="slider-label" data-i18n="menu.opacity">Opacity</span>
           <div class="slider-track"><div class="slider-fill" style="width:70%"></div></div>
           <span class="slider-val">70%</span>
         </div>
         <div class="slider-row">
-          <span class="slider-label">Wind</span>
+          <span class="slider-label" data-i18n="menu.wind">Wind</span>
           <div class="slider-track"><div class="slider-fill" style="width:48%"></div></div>
           <span class="slider-val">0.0</span>
         </div>
         <div class="menu-sep"></div>
-        <div class="menu-item"><span>Always on Top</span></div>
-        <div class="menu-item"><span class="menu-item-left">Below Windows</span><span class="menu-check">✓</span></div>
+        <div class="menu-item"><span data-i18n="menu.onTop">Always on Top</span></div>
+        <div class="menu-item"><span class="menu-item-left" data-i18n="menu.below">Below Windows</span><span class="menu-check">✓</span></div>
         <div class="menu-sep"></div>
-        <div class="menu-item"><span>Quit Particle FX</span><span class="menu-kbd">⌘Q</span></div>
+        <div class="menu-item"><span data-i18n="menu.quit">Quit Particle FX</span><span class="menu-kbd">⌘Q</span></div>
       </div>
     </div>
   </section>
@@ -711,33 +776,33 @@
 <!-- Specs -->
 <div class="container">
   <section id="specs">
-    <p class="section-label reveal">03 — Specs</p>
-    <h2 class="section-title reveal">Built for<br><em>macOS.</em></h2>
+    <p class="section-label reveal">03 — <span data-i18n="specs.label">Specs</span></p>
+    <h2 class="section-title reveal"><span data-i18n="specs.title1">Built for</span><br><em data-i18n="specs.title2">macOS.</em></h2>
 
     <div class="specs-grid reveal">
       <div class="spec-cell">
         <div class="spec-value">macOS 13+</div>
-        <div class="spec-label">Minimum Version</div>
+        <div class="spec-label" data-i18n="specs.version">Minimum Version</div>
       </div>
       <div class="spec-cell">
         <div class="spec-value">Universal</div>
-        <div class="spec-label">Apple Silicon + Intel</div>
+        <div class="spec-label" data-i18n="specs.arch">Apple Silicon + Intel</div>
       </div>
       <div class="spec-cell">
         <div class="spec-value">&lt; 5%</div>
-        <div class="spec-label">CPU at Standard Density</div>
+        <div class="spec-label" data-i18n="specs.cpu">CPU at Standard Density</div>
       </div>
     </div>
 
     <div style="margin-top: 64px;" class="reveal">
-      <p class="feature-icon" style="margin-bottom: 14px;">Technologies</p>
-      <p style="font-size:15px; color:var(--muted); line-height:1.7; max-width: 520px;">
+      <p class="feature-icon" style="margin-bottom: 14px;" data-i18n="specs.tech">Technologies</p>
+      <p style="font-size:15px; color:var(--muted); line-height:1.7; max-width: 520px;" data-i18n="specs.techDesc">
         Written in Swift and SwiftUI. Particles rendered via SpriteKit on Metal. Settings persisted through UserDefaults. Fully sandboxed with click-through transparent overlay windows.
       </p>
     </div>
 
     <div style="margin-top: 48px;" class="reveal">
-      <p class="feature-icon" style="margin-bottom: 14px;">Localizations</p>
+      <p class="feature-icon" style="margin-bottom: 14px;" data-i18n="specs.langs">Localizations</p>
       <div class="lang-pills">
         <span class="lang-pill">🇺🇸 English</span>
         <span class="lang-pill">🇨🇳 中文</span>
@@ -751,17 +816,228 @@
 
 <div class="divider"></div>
 
+<!-- Installation -->
+<div class="container">
+  <section id="install">
+    <p class="section-label reveal">04 — <span data-i18n="install.label">Installation</span></p>
+    <h2 class="section-title reveal"><span data-i18n="install.title1">Simple</span><br><em data-i18n="install.title2">setup.</em></h2>
+
+    <div class="install-guide">
+      <div class="step reveal">
+        <p class="step-num">STEP 01</p>
+        <p class="step-text" data-i18n="install.s1">Download and move <b>ParticleFX.app</b> to your <b>Applications</b> folder.</p>
+      </div>
+
+      <div class="step reveal">
+        <p class="step-num">STEP 02</p>
+        <p class="step-text" data-i18n="install.s2">Since the app is currently distributed without a developer certificate, macOS Gatekeeper will prevent it from launching. Open <b>Terminal</b> and run the following command to authorize it:</p>
+        <div class="code-wrap">
+          <code class="code-text">sudo xattr -d com.apple.quarantine /Applications/ParticleFX.app</code>
+          <span class="code-label">Terminal</span>
+        </div>
+      </div>
+
+      <div class="step reveal">
+        <p class="step-num">STEP 03</p>
+        <p class="step-text" data-i18n="install.s3">Launch <b>Particle FX</b> from your Applications folder. You're ready to go.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="divider"></div>
+
 <!-- Footer -->
 <div class="container">
   <footer>
     <div class="footer-inner">
       <p class="footer-text">© 2026 Particle FX</p>
-      <p class="footer-built">Built with <span>Swift · SpriteKit · Metal</span></p>
+      <p class="footer-built"><span data-i18n="footer.built">Built with</span> <span>Swift · SpriteKit · Metal</span></p>
     </div>
   </footer>
 </div>
 
 <script>
+// ── i18n System ──
+const i18n = {
+  en: {
+    'meta.title': 'Particle FX — Live Particle Effects for macOS',
+    'nav.effects': 'Effects',
+    'nav.features': 'Features',
+    'nav.specs': 'Specs',
+    'hero.eyebrow': 'macOS Desktop Enhancement',
+    'hero.title1': 'Your screen,',
+    'hero.title2': 'alive.',
+    'hero.sub': 'Drape your desktop in drifting snow, falling sakura petals, autumn leaves, or wandering fireflies. A living atmosphere, always in the background.',
+    'hero.download': 'Download for macOS',
+    'hero.cta': 'See effects →',
+    'effects.label': 'Effects',
+    'effects.title1': 'Four seasons,',
+    'effects.title2': 'one menubar app.',
+    'effects.winter': 'WINTER',
+    'effects.spring': 'SPRING',
+    'effects.autumn': 'AUTUMN',
+    'effects.summer': 'SUMMER',
+    'effects.snow': 'Snow',
+    'effects.snowDesc': 'Soft white flakes drift downward with gentle sway. Serene and meditative.',
+    'effects.sakura': 'Sakura',
+    'effects.sakuraDesc': 'Pink petals spiral and tumble on the breeze. Fleeting beauty in every frame.',
+    'effects.leaves': 'Leaves',
+    'effects.leavesDesc': 'Rust, amber, and gold leaves tumble in warm tones with rapid spin and drift.',
+    'effects.fireflies': 'Fireflies',
+    'effects.firefliesDesc': 'Luminous particles pulse and wander across your screen. Best after dark.',
+    'features.label': 'Features',
+    'features.title1': 'Thoughtfully',
+    'features.title2': 'designed.',
+    'features.f1.name': 'Two Layer Modes',
+    'features.f1.desc': 'Place particles above all windows for maximum drama, or slip them quietly below — floating on your wallpaper while you work.',
+    'features.f2.name': 'Menubar Native',
+    'features.f2.desc': 'No Dock icon. No floating window. Lives silently in your menu bar — ⌘⇧T to toggle on and off in an instant.',
+    'features.f3.name': 'Real-time Sliders',
+    'features.f3.desc': 'Tune density, speed, size, opacity, and wind directly from the menu. Changes apply live, no settings window required.',
+    'features.f4.name': 'Wind Simulation',
+    'features.f4.desc': 'Dial in horizontal acceleration for each effect. A gentle breeze or a full storm — the physics respond to your input.',
+    'features.f5.name': 'SpriteKit Rendering',
+    'features.f5.desc': 'Built on Apple\'s native SpriteKit for hardware-accelerated particle rendering. Smooth at any density, minimal CPU impact.',
+    'features.f6.name': '5 Languages',
+    'features.f6.desc': 'Full localization in English, Chinese, Japanese, German, and French. The interface speaks your language.',
+    'menu.disable': 'Disable Effects',
+    'menu.snow': 'Snow',
+    'menu.sakura': 'Sakura',
+    'menu.leaves': 'Leaves',
+    'menu.fireflies': 'Fireflies',
+    'menu.density': 'Density',
+    'menu.speed': 'Speed',
+    'menu.opacity': 'Opacity',
+    'menu.wind': 'Wind',
+    'menu.onTop': 'Always on Top',
+    'menu.below': 'Below Windows',
+    'menu.quit': 'Quit Particle FX',
+    'specs.label': 'Specs',
+    'specs.title1': 'Built for',
+    'specs.title2': 'macOS.',
+    'specs.version': 'Minimum Version',
+    'specs.arch': 'Apple Silicon + Intel',
+    'specs.cpu': 'CPU at Standard Density',
+    'specs.tech': 'Technologies',
+    'specs.techDesc': 'Written in Swift and SwiftUI. Particles rendered via SpriteKit on Metal. Settings persisted through UserDefaults. Fully sandboxed with click-through transparent overlay windows.',
+    'specs.langs': 'Localizations',
+    'install.label': 'Installation',
+    'install.title1': 'Simple',
+    'install.title2': 'setup.',
+    'install.s1': 'Download and move <b>ParticleFX.app</b> to your <b>Applications</b> folder.',
+    'install.s2': 'Since the app is currently distributed without a developer certificate, macOS Gatekeeper will prevent it from launching. Open <b>Terminal</b> and run the following command to authorize it:',
+    'install.s3': 'Launch <b>Particle FX</b> from your Applications folder. You\'re ready to go.',
+    'footer.built': 'Built with'
+  },
+  zh: {
+    'meta.title': 'Particle FX — macOS 粒子特效',
+    'nav.effects': '特效',
+    'nav.features': '功能',
+    'nav.specs': '规格',
+    'hero.eyebrow': 'macOS 桌面增强',
+    'hero.title1': '让你的屏幕，',
+    'hero.title2': '焕发生机。',
+    'hero.sub': '为桌面增添飘雪、樱花、落叶或萤火虫。一个生动的氛围，永远在背景中静静陪伴。',
+    'hero.download': '下载 macOS 版',
+    'hero.cta': '查看特效 →',
+    'effects.label': '特效',
+    'effects.title1': '四季变换，',
+    'effects.title2': '一个菜单栏应用。',
+    'effects.winter': '冬季',
+    'effects.spring': '春季',
+    'effects.autumn': '秋季',
+    'effects.summer': '夏季',
+    'effects.snow': '飘雪',
+    'effects.snowDesc': '柔软的白色雪花轻轻飘落，宁静而冥想。',
+    'effects.sakura': '樱花',
+    'effects.sakuraDesc': '粉色花瓣在微风中旋转翻滚，每一帧都是短暂的美。',
+    'effects.leaves': '落叶',
+    'effects.leavesDesc': '铁锈色、琥珀色和金色的叶子在温暖的色调中翻滚旋转。',
+    'effects.fireflies': '萤火虫',
+    'effects.firefliesDesc': '发光的粒子在屏幕上脉动和游走，天黑后效果最佳。',
+    'features.label': '功能',
+    'features.title1': '精心设计，',
+    'features.title2': '用心打造。',
+    'features.f1.name': '双层模式',
+    'features.f1.desc': '将粒子置于所有窗口上方以获得最大视觉效果，或让它们安静地隐藏在下方 — 在你的壁纸上飘动，不妨碍工作。',
+    'features.f2.name': '原生菜单栏',
+    'features.f2.desc': '没有 Dock 图标，没有浮动窗口。静静地驻留在菜单栏中 — 按 ⌘⇧T 即可瞬间开关。',
+    'features.f3.name': '实时滑块',
+    'features.f3.desc': '直接从菜单调整密度、速度、大小、透明度和风力。更改实时生效，无需设置窗口。',
+    'features.f4.name': '风力模拟',
+    'features.f4.desc': '为每种效果调节水平加速度，从轻柔的微风到猛烈的风暴 — 物理效果随你的输入而响应。',
+    'features.f5.name': 'SpriteKit 渲染',
+    'features.f5.desc': '基于 Apple 原生 SpriteKit 进行硬件加速粒子渲染。任何密度下都流畅，CPU 占用极低。',
+    'features.f6.name': '5 种语言',
+    'features.f6.desc': '完整本地化支持英语、中文、日语、德语和法语。界面会说你的语言。',
+    'menu.disable': '禁用特效',
+    'menu.snow': '飘雪',
+    'menu.sakura': '樱花',
+    'menu.leaves': '落叶',
+    'menu.fireflies': '萤火虫',
+    'menu.density': '密度',
+    'menu.speed': '速度',
+    'menu.opacity': '透明度',
+    'menu.wind': '风力',
+    'menu.onTop': '置顶显示',
+    'menu.below': '置于窗口下方',
+    'menu.quit': '退出 Particle FX',
+    'specs.label': '规格',
+    'specs.title1': '为',
+    'specs.title2': 'macOS 打造。',
+    'specs.version': '最低版本',
+    'specs.arch': 'Apple 芯片 + Intel',
+    'specs.cpu': '标准密度下 CPU 占用',
+    'specs.tech': '技术',
+    'specs.techDesc': '使用 Swift 和 SwiftUI 编写。粒子通过 SpriteKit 在 Metal 上渲染。设置通过 UserDefaults 持久化。完全沙盒化，支持点击穿透的透明覆盖窗口。',
+    'specs.langs': '本地化',
+    'install.label': '安装',
+    'install.title1': '简单',
+    'install.title2': '设置。',
+    'install.s1': '下载并将 <b>ParticleFX.app</b> 移动到 <b>应用程序</b> 文件夹。',
+    'install.s2': '由于应用目前未使用开发者证书分发，macOS Gatekeeper 会阻止其启动。打开 <b>终端</b> 并运行以下命令授权：',
+    'install.s3': '从应用程序文件夹启动 <b>Particle FX</b>。准备就绪。',
+    'footer.built': '使用'
+  }
+};
+
+let currentLang = 'en';
+
+function detectLang() {
+  const nav = navigator.language || navigator.userLanguage;
+  if (nav && nav.toLowerCase().startsWith('zh')) return 'zh';
+  return 'en';
+}
+
+function applyLang(lang) {
+  currentLang = lang;
+  const dict = i18n[lang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (dict[key]) {
+      if (key === 'meta.title') {
+        el.textContent = dict[key];
+      } else {
+        el.innerHTML = dict[key];
+      }
+    }
+  });
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  const btn = document.getElementById('lang-toggle');
+  if (btn) btn.textContent = lang === 'zh' ? 'EN' : '中文';
+}
+
+function toggleLang() {
+  applyLang(currentLang === 'zh' ? 'en' : 'zh');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  applyLang(detectLang());
+  const btn = document.getElementById('lang-toggle');
+  if (btn) btn.addEventListener('click', toggleLang);
+});
+
 // ── Canvas Particle System ──
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
